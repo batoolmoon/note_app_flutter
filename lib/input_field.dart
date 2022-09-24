@@ -10,27 +10,30 @@ class Field extends StatelessWidget {
   final TextEditingController ? controller;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title , style: titleStyle, ),
-        Container(
-          margin: EdgeInsets.all(15),
-
-          height: 52,
-          child: Expanded(
-            child: TextFormField(
-              controller: controller,
-              decoration:InputDecoration(
-                hintText: hint,
-                suffixIcon: myIcon,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
-                ),
-              ) ,
+    return Container(
+      margin: EdgeInsets.all(15),
+      padding: EdgeInsets.all(5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title , style: titleStyle, ),
+          SizedBox(height: 3,),
+          Container(
+            height: 52,
+            child: Expanded(
+              child: TextFormField(
+                controller: controller,
+                decoration:InputDecoration(
+                  hintText: hint,
+                  suffixIcon: myIcon,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
+                  ),
+                ) ,
+              ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
 
   }

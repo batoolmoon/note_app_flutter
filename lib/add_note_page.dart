@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:noteme/button.dart';
+import 'package:noteme/taskconrol.dart';
+import 'package:noteme/taskdata.dart';
 import 'package:noteme/theme.dart';
 
 import 'input_field.dart';
@@ -16,6 +18,7 @@ class Notes extends StatefulWidget {
 }
 
 class _NotesState extends State<Notes> {
+  final TaskContollers taskContollers = Get.put(TaskContollers());
   final TextEditingController titleController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
   String selectDate = DateFormat.yMd().format(DateTime.now());
@@ -168,82 +171,101 @@ class _NotesState extends State<Notes> {
                     });
                   },
                 )),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Color",
-                      style: titleStyle,
-                    ),
-                    Wrap(
-                      children: List<Widget>.generate(3, (int mycolor) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              colornote = mycolor;
-                            });
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: CircleAvatar(
-                              radius: 15,
-                              backgroundColor: NoteColor(mycolor),
-                              child: colornote == mycolor
-                                  ? Icon(Icons.download_done_outlined,
-                                      color: Colors.white, size: 16)
-                                  : Container(),
+            Container(
+              margin: EdgeInsets.all(10),
+              padding: EdgeInsets.all(5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Color",
+                        style: titleStyle,
+                      ),
+                      Wrap(
+                        children: List<Widget>.generate(3, (int mycolor) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                colornote = mycolor;
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor: NoteColor(mycolor),
+                                child: colornote == mycolor
+                                    ? Icon(Icons.download_done_outlined,
+                                        color: Colors.white, size: 16)
+                                    : Container(),
+                              ),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      validData();
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: 100,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.deepPurpleAccent,
+                      ),
+                      child: const Text(
+                        "Creat TASK",
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ],
-                ),
-        GestureDetector(
-          onTap: (){validData();},
-          child: Container(
-            alignment: Alignment.center,
-            width: 100,
-            height:45,
-
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color:Colors.deepPurpleAccent,
-            ),
-            child: const Text("Creat TASK" , style: TextStyle(
-                color: Colors.white,
-                fontSize: 12
-            ),
-              textAlign: TextAlign.center,),
-          ),
-        ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
-validData(){
-    if (titleController.text.isNotEmpty &&noteController.text.isNotEmpty)
-      {//todo
-        //database
 
-        Get.back();
-      }
-    else if (titleController.text.isEmpty || noteController.text.isEmpty){
-      Get.snackbar("Required" , "All Field Are Required !!",
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.red,
+  validData() {
+    if (titleController.text.isNotEmpty && noteController.text.isNotEmpty) {
+      toDataBaseJson();
+      Get.back();
+    } else if (titleController.text.isEmpty || noteController.text.isEmpty) {
+      Get.snackbar(
+        "Required",
+        "All Field Are Required !!",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
         colorText: Colors.white,
         icon: Icon(Icons.warning_amber_outlined),
       );
     }
-}
+  }
+
+  toDataBaseJson() {
+    taskContollers.addNote(
+    task:Task(title:titleController.text,
+    note:noteController.text,
+    isCompleted:0,
+    date:selectDate,
+    starttTime:startTime,
+    endTime :endtTime,
+    color: colornote,
+    remind:selectReminder,
+    repeat:selectRepet,));
+  }
+
   userDate() async {
     DateTime? date = await showDatePicker(
         context: context,
